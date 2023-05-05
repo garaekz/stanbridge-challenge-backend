@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Contracts\AttendanceRepositoryInterface;
+use App\Contracts\StudentRepositoryInterface;
+use App\Repositories\AttendanceRepository;
+use App\Repositories\StudentRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +15,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            AttendanceRepositoryInterface::class,
+            AttendanceRepository::class
+        );
+
+        $this->app->bind(
+            StudentRepositoryInterface::class,
+            StudentRepository::class
+        );
     }
 
     /**

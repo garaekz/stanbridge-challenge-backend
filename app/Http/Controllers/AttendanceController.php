@@ -3,37 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrDestroyAttendanceRequest;
-use App\Models\Attendance;
+use App\Services\AttendanceService;
+use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
     /**
      * Store or update attendance.
      */
-    public function storeOrDestroy(StoreOrDestroyAttendanceRequest $request)
+    public function storeOrDestroy(StoreOrDestroyAttendanceRequest $request, AttendanceService $service)
     {
         try {
-            if ($request->attendance === false) {
-                Attendance::where('student_id', $request->student_id)
-                    ->where('course_id', $request->course_id)
-                    ->where('date', $request->date)
-                    ->delete();
-                return response()->json([
-                    'message' => 'Attendance deleted successfully.',
-                ]);
-            }
+            $service->createOrDelete($request->validated());
 
-            Attendance::firstOrCreate([
-                'student_id' => $request->student_id,
-                'course_id' => $request->course_id,
-                'date' => $request->date,
-            ], [
-                'attendance' => $request->attendance,
-            ]);
             return response()->json([
-                'message' => 'Attendance stored successfully.',
+                'message' => 'Attendance updated successfully.',
             ]);
         } catch (\Throwable $th) {
+            // Or any logging system you use
+            Log::error($th);
             return response()->json([
                 'message' => 'Attendance could not be stored.',
             ], 500);

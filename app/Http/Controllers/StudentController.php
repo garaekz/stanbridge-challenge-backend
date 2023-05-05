@@ -2,75 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Attendance;
-use App\Models\Student;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Http\Requests\IndexStudentRequest;
+use App\Services\StudentService;
+use Illuminate\Support\Facades\Log;
 
 class StudentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IndexStudentRequest $request, StudentService $service)
     {
-        $date = now()->format('Y-m-d');
-        Attendance::firstOrCreate(['student_id' => 1665101843499, 'date' => $date, 'course_id' => 1]);
-        $students = Student::withCount(['attendances as attendance' => function ($query) use ($date) {
-            $query->where('date', $date);
-        }])->orderBy('id')->get()->map(function ($student) {
-            $student['attendance'] = $student['attendance'] > 0;
-            return $student;
-        });
-
-        return $students;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        try {
+            return $service->getPaginatedWithAttendance($request->date, 30);
+        } catch (\Throwable $th) {
+            // Or any logging system you use
+            Log::error($th);
+            return response()->json(['message' => 'An error ocurred while fetching your data'], 500);
+        }
     }
 }

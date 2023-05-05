@@ -76,6 +76,21 @@ class AttendanceTest extends TestCase
         $response->assertSuccessful();
     }
 
+    public function test_it_returns_success_if_attendance_is_false_and_attendance_does_not_exist()
+    {
+        $student = Student::factory()->create();
+        $course = Course::factory()->create();
+
+        $response = $this->postJson('/api/attendances', [
+            'student_id' => $student->id,
+            'course_id' => $course->id,
+            'date' => now()->format('Y-m-d'),
+            'attendance' => false,
+        ]);
+
+        $response->assertSuccessful();
+    }
+
     public function test_it_deletes_attendance_if_exists_and_attendance_is_false()
     {
         $attendance = Attendance::factory()->create([
