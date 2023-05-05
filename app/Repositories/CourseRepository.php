@@ -2,15 +2,14 @@
 
 namespace App\Repositories;
 
-use App\Contracts\StudentRepositoryInterface;
-use App\Models\Student;
+use App\Contracts\CourseRepositoryInterface;
+use App\Models\Course;
 
-class StudentRepository implements StudentRepositoryInterface
+class CourseRepository implements CourseRepositoryInterface
 {
     public function __construct(
-        private Student $model
-    ) {
-    }
+        private Course $model
+    ){}
 
     public function all($paginate = null)
     {
@@ -39,15 +38,5 @@ class StudentRepository implements StudentRepositoryInterface
         }
 
         return $this->model->with($with)->where($where)->first();
-    }
-
-    public function getWithAttendance($course_id, $date, $perPage)
-    {
-        return $this->model->withCount(['attendances as attendance' => function ($query) use ($course_id, $date) {
-            $query->where([['date', $date], ['course_id', $course_id]]);
-        }])->orderBy('id')->paginate($perPage)->through(function ($student) {
-            $student['attendance'] = $student['attendance'] > 0;
-            return $student;
-        });
     }
 }

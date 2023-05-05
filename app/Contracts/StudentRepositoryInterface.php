@@ -4,5 +4,5 @@ namespace App\Contracts;
 
 interface StudentRepositoryInterface extends BaseModelRepositoryInterface
 {
-    public function getWithAttendance($date, $perPage);
+    public function getWithAttendance($course_id, $date, $perPage);
 }

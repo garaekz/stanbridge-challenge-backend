@@ -10,9 +10,9 @@ class StudentService
         private StudentRepositoryInterface $repository
     ) {}
 
-    public function getPaginatedWithAttendance($date, $perPage)
+    public function getPaginatedWithAttendance($course_id, $date, $perPage)
     {
-        return $this->repository->getWithAttendance($date, $perPage);
+        return $this->repository->getWithAttendance($course_id, $date, $perPage);
     }
 
 }
